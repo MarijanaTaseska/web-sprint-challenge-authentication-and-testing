@@ -21,7 +21,8 @@ server.use(session({
         secure: false,
         httpOnly: false,
     },
-    resave:false,
+    rolling: true,
+    resave: false,
     saveUninitialized: false
 }))
 
