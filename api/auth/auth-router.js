@@ -1,7 +1,13 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 const User = require('./user-model')
-const { validateUsernameAndPassword, userNamePasswordBody } = require('./auth-middleware')
+const {
+  validateUsernameAndPassword,
+  userNamePasswordBody } = require('./auth-middleware')
+
+  const {JWT_SECRET} = require('../../config')
+
 
 
 router.post('/register', validateUsernameAndPassword, async (req, res, next) => {
@@ -35,7 +41,6 @@ router.post('/register', validateUsernameAndPassword, async (req, res, next) => 
     const { username, password } = req.body
     const hash = bcrypt.hashSync(password, 8)
     const newUser = { username, password: hash }
-
     const result = await User.add(newUser)
     res.status(201).json(result)
 
@@ -73,9 +78,10 @@ router.post('/login', userNamePasswordBody, async (req, res, next) => {
     const [user] = await User.findBy({ username })
     if (user && bcrypt.compareSync(password, user.password)) {
       req.session.user = user
+      const token = buildToken(user)
       res.status(200).json({
         message: `welcome, ${user.username}`,
-        token: user.password
+        token
       })
     } else {
       res.status(401).json({ message: "invalid credentials" })
@@ -84,5 +90,17 @@ router.post('/login', userNamePasswordBody, async (req, res, next) => {
     next(err)
   }
 });
+
+function buildToken(user) {
+  const payload = {
+    subject: user.id,
+    username: user.username,
+    role: user.role,
+  }
+  const options = {
+    expiresIn: '1d'
+  }
+  return jwt.sign(payload,JWT_SECRET, options)
+}
 
 module.exports = router;
