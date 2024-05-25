@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs')
 const User = require('./user-model')
-const {validateUsernameAndPassword, userNamePasswordBody} = require('./auth-middleware')
+const { validateUsernameAndPassword, userNamePasswordBody } = require('./auth-middleware')
 
 
-router.post('/register',validateUsernameAndPassword, async (req, res, next) => {
+router.post('/register', validateUsernameAndPassword, async (req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -44,7 +44,7 @@ router.post('/register',validateUsernameAndPassword, async (req, res, next) => {
   }
 });
 
-router.post('/login',userNamePasswordBody, async (req, res, next) => {
+router.post('/login', userNamePasswordBody, async (req, res, next) => {
   /*
   IMPLEMENT
   You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -72,12 +72,13 @@ router.post('/login',userNamePasswordBody, async (req, res, next) => {
     const { username, password } = req.body
     const [user] = await User.findBy({ username })
     if (user && bcrypt.compareSync(password, user.password)) {
+      req.session.user = user
       res.status(200).json({
-        message:`welcome, ${user.username}`,
-        token:user.password
+        message: `welcome, ${user.username}`,
+        token: user.password
       })
     } else {
-      res.status(401).json({message:"invalid credentials"})
+      res.status(401).json({ message: "invalid credentials" })
     }
   } catch (err) {
     next(err)
