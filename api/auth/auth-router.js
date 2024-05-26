@@ -36,7 +36,6 @@ router.post('/register', validateUsernameAndPassword, async (req, res, next) => 
     4- On FAILED registration due to the `username` being taken,
       the response body should include a string exactly as follows: "username taken".
   */
-
   try {
     const { username, password } = req.body
     const hash = bcrypt.hashSync(password, 8)
@@ -77,7 +76,7 @@ router.post('/login', userNamePasswordBody, async (req, res, next) => {
     const { username, password } = req.body
     const [user] = await User.findBy({ username })
     if (user && bcrypt.compareSync(password, user.password)) {
-      req.session.user = user
+      //req.session.user = user
       const token = buildToken(user)
       res.status(200).json({
         message: `welcome, ${user.username}`,
@@ -102,5 +101,10 @@ function buildToken(user) {
   }
   return jwt.sign(payload,JWT_SECRET, options)
 }
+
+router.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.json({ message: err.message });
+});
 
 module.exports = router;
