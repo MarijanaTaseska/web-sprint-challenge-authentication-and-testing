@@ -9,12 +9,11 @@ module.exports = (req, res, next) => {
         res.status(401).json({ message: 'token invalid' })
       } else {
         req.decodedJwt = decoded
-        console.log(req.decodedJwt)
         next()
       }
     })
   } else {
-    res.json({ message: 'token required' })
+    res.status(401).json({ message: 'token required' })
   }
 
   /*

@@ -78,7 +78,7 @@ router.post('/login', userNamePasswordBody, async (req, res, next) => {
     if (user && bcrypt.compareSync(password, user.password)) {
       //req.session.user = user
       const token = buildToken(user)
-      res.status(200).json({
+      res.json({
         message: `welcome, ${user.username}`,
         token
       })
@@ -103,7 +103,7 @@ function buildToken(user) {
 }
 
 router.use((err, req, res, next) => {
-  res.status(err.status || 500);
+  res.status(500);
   res.json({ message: err.message });
 });
 
