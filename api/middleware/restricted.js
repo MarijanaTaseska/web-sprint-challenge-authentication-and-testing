@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
         next()
       }
     })
-  } else {
+  } else if(!token){
     res.status(401).json({ message: 'token required' })
   }
 
