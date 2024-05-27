@@ -9,8 +9,9 @@ async function validateUsernameAndPassword(req, res, next) {
         const [userExist] = await User.findBy({ username })
         if (userExist) {
             return res.status(400).json({ message: "username taken" })
+        }else{
+            next()
         }
-        next()
     } catch (err) {
         next(err)
     }

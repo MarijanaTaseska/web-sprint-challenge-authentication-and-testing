@@ -1,3 +1,4 @@
+const express = require("express")
 const router = require('express').Router();
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
@@ -42,7 +43,7 @@ router.post('/register', validateUsernameAndPassword, async (req, res, next) => 
     const newUser = { username, password: hash }
     const result = await User.add(newUser)
     res.status(201).json(result)
-
+    
   } catch (err) {
     next(err)
   }
